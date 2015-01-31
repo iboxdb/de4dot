@@ -1240,7 +1240,7 @@ namespace de4dot.code.renamer
             ifaceMethods.VisitAll((group) => PrepareRenameVirtualMethods(group, "imethod_", true));
             virtualMethods.VisitAll((group) => PrepareRenameVirtualMethods(group, "vmethod_", true));
             //#TODO RestoreMethodArgs
-            //RestoreMethodArgs(groups);
+            RestoreMethodArgs(groups);
 
             foreach (var typeDef in modules.AllTypes)
                 memberInfos.Type(typeDef).PrepareRenameMethods2();
