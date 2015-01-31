@@ -214,4 +214,17 @@ namespace de4dot.code.renamer {
 			return base.CreateNameCreator("G" + prefix);
 		}
 	}
+
+    class FixedNameNameCreator : INameCreator
+    {
+        string name;
+        public FixedNameNameCreator(string _name)
+        {
+            name = _name;
+        }
+        public string Create()
+        {
+            return name;
+        }
+    }
 }

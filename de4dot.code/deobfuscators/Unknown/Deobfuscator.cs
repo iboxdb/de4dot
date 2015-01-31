@@ -40,10 +40,15 @@ namespace de4dot.code.deobfuscators.Unknown {
 		}
 
 		public override IDeobfuscator CreateDeobfuscator() {
-			return new Deobfuscator(new Deobfuscator.Options {
-				RenameResourcesInCode = false,
-				ValidNameRegex = validNameRegex.Get(),
-			});
+            //return new Deobfuscator(new Deobfuscator.Options {
+            //    RenameResourcesInCode = false,
+            //    ValidNameRegex = validNameRegex.Get(),
+            //});
+            return new Deobfuscator(new Deobfuscator.Options
+            {
+                RenameResourcesInCode = false,
+                ValidNameRegex = new NameRegexes(@"^<") ,
+            });
 		}
 	}
 

@@ -26,6 +26,8 @@ using de4dot.code.renamer.asmmodules;
 using de4dot.blocks;
 
 namespace de4dot.code.renamer {
+
+    //#ToDo
 	class TypeInfo : MemberInfo {
 		public string oldNamespace;
 		public string newNamespace;
@@ -103,7 +105,7 @@ namespace de4dot.code.renamer {
 					newNamespace = "";
 				Rename("<Module>");
 			}
-			else if (!checker.IsValidTypeName(oldName)) {
+			else if (!checker.IsValidTypeName(oldFullName)) {
 				if (origClassName != null && checker.IsValidTypeName(origClassName))
 					Rename(state.GetTypeName(oldName, origClassName));
 				else {
@@ -177,7 +179,7 @@ namespace de4dot.code.renamer {
 						continue;
 					if (!fieldDef.FieldDef.IsStatic || !fieldDef.FieldDef.IsLiteral)
 						continue;
-					if (!checker.IsValidFieldName(fieldInfo.oldName))
+					if (!checker.IsValidFieldName(fieldInfo.oldFullName))
 						fieldInfo.Rename(string.Format(nameFormat, i));
 					i++;
 				}
@@ -186,7 +188,7 @@ namespace de4dot.code.renamer {
 				var fieldInfo = Field(fieldDef);
 				if (fieldInfo.renamed)
 					continue;
-				if (!checker.IsValidFieldName(fieldInfo.oldName))
+                if (!checker.IsValidFieldName(fieldInfo.oldFullName))
 					fieldInfo.Rename(fieldInfo.suggestedName ?? variableNameState.GetNewFieldName(fieldDef.FieldDef));
 			}
 		}
@@ -224,9 +226,10 @@ namespace de4dot.code.renamer {
 				return;
 
 			string propName = propInfo.oldName;
-			if (!NameChecker.IsValidPropertyName(propName))
-				propName = propInfo.suggestedName;
-			if (!NameChecker.IsValidPropertyName(propName)) {
+            //if (!NameChecker.IsValidPropertyName(propInfo.oldFullName))
+            //    propName = propInfo.suggestedName;
+            if (!NameChecker.IsValidPropertyName(propInfo.oldFullName))
+            {
 				if (propDef.IsItemProperty())
 					propName = "Item";
 				else
@@ -293,6 +296,7 @@ namespace de4dot.code.renamer {
 		}
 
 		void PrepareRenameMethodArgs(MMethodDef methodDef) {
+            var oldfullName = MemberInfo.GetMyFullName(methodDef.MethodDef);
 			VariableNameState newVariableNameState = null;
 			ParamInfo info;
 			if (methodDef.VisibleParameterCount > 0) {
@@ -314,7 +318,7 @@ namespace de4dot.code.renamer {
 						info = Param(paramDef);
 						if (info.GotNewName())
 							continue;
-						if (!checker.IsValidMethodArgName(info.oldName))
+                        if (!checker.IsValidMethodArgName(oldfullName))
 							info.newName = newVariableNameState.GetNewParamName(info.oldName, paramDef.ParameterDef);
 					}
 				}
@@ -322,7 +326,8 @@ namespace de4dot.code.renamer {
 
 			info = Param(methodDef.ReturnParamDef);
 			if (!info.GotNewName()) {
-				if (!NameChecker.IsValidMethodReturnArgName(info.oldName)) {
+                if (!NameChecker.IsValidMethodReturnArgName(oldfullName))
+                {
 					if (newVariableNameState == null)
 						newVariableNameState = variableNameState.CloneParamsOnly();
 					info.newName = newVariableNameState.GetNewParamName(info.oldName, methodDef.ReturnParamDef.ParameterDef);
@@ -382,7 +387,7 @@ namespace de4dot.code.renamer {
 			var checker = NameChecker;
 
 			// PInvoke methods' EntryPoint is always valid. It has to, so always rename.
-			bool isValidName = NameChecker.IsValidMethodName(info.oldName);
+			bool isValidName = NameChecker.IsValidMethodName(info.oldFullName);
 			bool isExternPInvoke = methodDef.MethodDef.ImplMap != null && methodDef.MethodDef.RVA == 0;
 			if (!isValidName || isExternPInvoke) {
 				INameCreator nameCreator = null;

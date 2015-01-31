@@ -24,19 +24,24 @@ using dnlib.DotNet;
 using de4dot.code;
 using de4dot.code.deobfuscators;
 
-namespace de4dot.cui {
-	class ExitException : Exception {
-		public readonly int code;
-		public ExitException(int code) {
-			this.code = code;
-		}
-	}
+namespace de4dot.cui
+{
+    class ExitException : Exception
+    {
+        public readonly int code;
+        public ExitException(int code)
+        {
+            this.code = code;
+        }
+    }
 
-	class Program {
-		static IList<IDeobfuscatorInfo> deobfuscatorInfos = CreateDeobfuscatorInfos();
+    class Program
+    {
+        static IList<IDeobfuscatorInfo> deobfuscatorInfos = CreateDeobfuscatorInfos();
 
-		static IList<IDeobfuscatorInfo> CreateDeobfuscatorInfos() {
-			return new List<IDeobfuscatorInfo> {
+        static IList<IDeobfuscatorInfo> CreateDeobfuscatorInfos()
+        {
+            return new List<IDeobfuscatorInfo> {
 				new de4dot.code.deobfuscators.Unknown.DeobfuscatorInfo(),
 				new de4dot.code.deobfuscators.Agile_NET.DeobfuscatorInfo(),
 				new de4dot.code.deobfuscators.Babel_NET.DeobfuscatorInfo(),
@@ -59,118 +64,140 @@ namespace de4dot.cui {
 				new de4dot.code.deobfuscators.Spices_Net.DeobfuscatorInfo(),
 				new de4dot.code.deobfuscators.Xenocode.DeobfuscatorInfo(),
 			};
-		}
+        }
 
-		public static int Main(string[] args) {
-			int exitCode = 0;
+        public static int Main(string[] args)
+        {
+            int exitCode = 0;
 
-			const string showAllMessagesEnvName = "SHOWALLMESSAGES";
-			try {
-				if (Console.OutputEncoding.IsSingleByte)
-					Console.OutputEncoding = new UTF8Encoding(false);
+            const string showAllMessagesEnvName = "SHOWALLMESSAGES";
+            try
+            {
+                if (Console.OutputEncoding.IsSingleByte)
+                    Console.OutputEncoding = new UTF8Encoding(false);
 
-				Logger.Instance.CanIgnoreMessages = !HasEnv(showAllMessagesEnvName);
+                Logger.Instance.CanIgnoreMessages = !HasEnv(showAllMessagesEnvName);
 
-				Logger.n("");
-				Logger.n("de4dot v{0} Copyright (C) 2011-2014 de4dot@gmail.com", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
-				Logger.n("Latest version and source code: https://github.com/0xd4d/de4dot");
-				Logger.n("");
+                Logger.n("");
+                Logger.n("de4dot v{0} Copyright (C) 2011-2014 de4dot@gmail.com", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
+                Logger.n("Latest version and source code: https://github.com/0xd4d/de4dot");
+                Logger.n("");
 
-				var options = new FilesDeobfuscator.Options();
-				ParseCommandLine(args, options);
-				new FilesDeobfuscator(options).DoIt();
-			}
-			catch (ExitException ex) {
-				exitCode = ex.code;
-			}
-			catch (UserException ex) {
-				Logger.Instance.LogErrorDontIgnore("{0}", ex.Message);
-				exitCode = 1;
-			}
-			catch (Exception ex) {
-				if (PrintFullStackTrace()) {
-					PrintStackTrace(ex);
-					Logger.Instance.LogErrorDontIgnore("\nTry the latest version!");
-				}
-				else {
-					Logger.Instance.LogErrorDontIgnore("\n\n");
-					Logger.Instance.LogErrorDontIgnore("Hmmmm... something didn't work. Try the latest version.");
-				}
-				exitCode = 1;
-			}
 
-			if (Logger.Instance.NumIgnoredMessages > 0) {
-				if (Logger.Instance.NumIgnoredMessages == 1)
-					Logger.n("Ignored {0} warning/error", Logger.Instance.NumIgnoredMessages);
-				else
-					Logger.n("Ignored {0} warnings/errors", Logger.Instance.NumIgnoredMessages);
-				Logger.n("Use -v/-vv option or set environment variable {0}=1 to see all messages", showAllMessagesEnvName);
-			}
+                args = new string[] { @"C:\Temp\net2Release\iBoxDB.net2.dll" };
+                var largs = new List<string>(args);
+                if (largs.Count > 0) { largs.Add("--one-file"); }
+                var options = new FilesDeobfuscator.Options();
+                ParseCommandLine( largs.ToArray() , options);
+                new FilesDeobfuscator(options).DoIt();
+            }
+            catch (ExitException ex)
+            {
+                exitCode = ex.code;
+            }
+            catch (UserException ex)
+            {
+                Logger.Instance.LogErrorDontIgnore("{0}", ex.Message);
+                exitCode = 1;
+            }
+            catch (Exception ex)
+            {
+                if (PrintFullStackTrace())
+                {
+                    PrintStackTrace(ex);
+                    Logger.Instance.LogErrorDontIgnore("\nTry the latest version!");
+                }
+                else
+                {
+                    Logger.Instance.LogErrorDontIgnore("\n\n");
+                    Logger.Instance.LogErrorDontIgnore("Hmmmm... something didn't work. Try the latest version.");
+                }
+                exitCode = 1;
+            }
 
-			if (IsN00bUser()) {
-				Console.Error.WriteLine("\n\nPress any key to exit...\n");
-				try {
-					Console.ReadKey(true);
-				}
-				catch (InvalidOperationException) {
-				}
-			}
+            if (Logger.Instance.NumIgnoredMessages > 0)
+            {
+                if (Logger.Instance.NumIgnoredMessages == 1)
+                    Logger.n("Ignored {0} warning/error", Logger.Instance.NumIgnoredMessages);
+                else
+                    Logger.n("Ignored {0} warnings/errors", Logger.Instance.NumIgnoredMessages);
+                Logger.n("Use -v/-vv option or set environment variable {0}=1 to see all messages", showAllMessagesEnvName);
+            }
 
-			return exitCode;
-		}
+            if (IsN00bUser())
+            {
+                Console.Error.WriteLine("\n\nPress any key to exit...\n");
+                try
+                {
+                    Console.ReadKey(true);
+                }
+                catch (InvalidOperationException)
+                {
+                }
+            }
 
-		static bool PrintFullStackTrace() {
-			if (!Logger.Instance.IgnoresEvent(LoggerEvent.Verbose))
-				return true;
-			if (HasEnv("STACKTRACE"))
-				return true;
+            return exitCode;
+        }
 
-			return false;
-		}
+        static bool PrintFullStackTrace()
+        {
+            if (!Logger.Instance.IgnoresEvent(LoggerEvent.Verbose))
+                return true;
+            if (HasEnv("STACKTRACE"))
+                return true;
 
-		static bool HasEnv(string name) {
-			foreach (var tmp in Environment.GetEnvironmentVariables().Keys) {
-				var env = tmp as string;
-				if (env == null)
-					continue;
-				if (string.Equals(env, name, StringComparison.OrdinalIgnoreCase))
-					return true;
-			}
-			return false;
-		}
+            return false;
+        }
 
-		static bool IsN00bUser() {
-			if (HasEnv("VisualStudioDir"))
-				return false;
-			return HasEnv("windir") && !HasEnv("PROMPT");
-		}
+        static bool HasEnv(string name)
+        {
+            foreach (var tmp in Environment.GetEnvironmentVariables().Keys)
+            {
+                var env = tmp as string;
+                if (env == null)
+                    continue;
+                if (string.Equals(env, name, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
+        }
 
-		public static void PrintStackTrace(Exception ex) {
-			PrintStackTrace(ex, LoggerEvent.Error);
-		}
+        static bool IsN00bUser()
+        {
+            if (HasEnv("VisualStudioDir"))
+                return false;
+            return HasEnv("windir") && !HasEnv("PROMPT");
+        }
 
-		public static void PrintStackTrace(Exception ex, LoggerEvent loggerEvent) {
-			var line = new string('-', 78);
-			Logger.Instance.Log(false, null, loggerEvent, "\n\n");
-			Logger.Instance.Log(false, null, loggerEvent, line);
-			Logger.Instance.Log(false, null, loggerEvent, "Stack trace:\n{0}", ex.StackTrace);
-			Logger.Instance.Log(false, null, loggerEvent, "\n\nCaught an exception:\n");
-			Logger.Instance.Log(false, null, loggerEvent, line);
-			Logger.Instance.Log(false, null, loggerEvent, "Message:");
-			Logger.Instance.Log(false, null, loggerEvent, "  {0}", ex.Message);
-			Logger.Instance.Log(false, null, loggerEvent, "Type:");
-			Logger.Instance.Log(false, null, loggerEvent, "  {0}", ex.GetType());
-			Logger.Instance.Log(false, null, loggerEvent, line);
-		}
+        public static void PrintStackTrace(Exception ex)
+        {
+            PrintStackTrace(ex, LoggerEvent.Error);
+        }
 
-		static void ParseCommandLine(string[] args, FilesDeobfuscator.Options options) {
-			new CommandLineParser(deobfuscatorInfos, options).Parse(args);
+        public static void PrintStackTrace(Exception ex, LoggerEvent loggerEvent)
+        {
+            var line = new string('-', 78);
+            Logger.Instance.Log(false, null, loggerEvent, "\n\n");
+            Logger.Instance.Log(false, null, loggerEvent, line);
+            Logger.Instance.Log(false, null, loggerEvent, "Stack trace:\n{0}", ex.StackTrace);
+            Logger.Instance.Log(false, null, loggerEvent, "\n\nCaught an exception:\n");
+            Logger.Instance.Log(false, null, loggerEvent, line);
+            Logger.Instance.Log(false, null, loggerEvent, "Message:");
+            Logger.Instance.Log(false, null, loggerEvent, "  {0}", ex.Message);
+            Logger.Instance.Log(false, null, loggerEvent, "Type:");
+            Logger.Instance.Log(false, null, loggerEvent, "  {0}", ex.GetType());
+            Logger.Instance.Log(false, null, loggerEvent, line);
+        }
 
-			Logger.vv("Args:");
-			Logger.Instance.Indent();
-			foreach (var arg in args)
-				Logger.vv("{0}", Utils.ToCsharpString(arg));
-			Logger.Instance.DeIndent();
-		}
-	}
+        static void ParseCommandLine(string[] args, FilesDeobfuscator.Options options)
+        {
+            new CommandLineParser(deobfuscatorInfos, options).Parse(args);
+
+            Logger.vv("Args:");
+            Logger.Instance.Indent();
+            foreach (var arg in args)
+                Logger.vv("{0}", Utils.ToCsharpString(arg));
+            Logger.Instance.DeIndent();
+        }
+    }
 }

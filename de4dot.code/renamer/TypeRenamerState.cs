@@ -21,18 +21,21 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 
+
 namespace de4dot.code.renamer {
 	class TypeRenamerState {
 		ExistingNames existingNames;
 		Dictionary<string, string> namespaceToNewName;
-		NameCreator createNamespaceName;
+		INameCreator createNamespaceName;
 		public ITypeNameCreator globalTypeNameCreator;
 		public ITypeNameCreator internalTypeNameCreator;
 
 		public TypeRenamerState() {
+            //#XDO Rename
 			existingNames = new ExistingNames();
 			namespaceToNewName = new Dictionary<string, string>(StringComparer.Ordinal);
-			createNamespaceName = new NameCreator("ns");
+            createNamespaceName = new FixedNameNameCreator("iBoxDB.ByteCodes");
+               // new NameCreator("ns");
 			globalTypeNameCreator = new GlobalTypeNameCreator(existingNames);
 			internalTypeNameCreator = new TypeNameCreator(existingNames);
 		}
