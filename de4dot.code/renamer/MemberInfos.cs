@@ -46,7 +46,8 @@ namespace de4dot.code.renamer
         public static string GetMyFullName(IMemberRef mref)
         {
             var oldFullName = mref.FullName;
-            
+           
+
             var ei = oldFullName.IndexOf(' ');
             if (ei > 0)
             {
@@ -65,13 +66,13 @@ namespace de4dot.code.renamer
             }
 
             var fd = mref as dnlib.DotNet.FieldDef;
-            if (fd != null && (!fd.IsPublic))
+            if (fd != null && (!fd.IsPublic) && (!fd.IsFamily))
             {
                 oldFullName += "[NonPublic]";
             }
 
             var md = mref as dnlib.DotNet.MethodDef;
-            if (md != null && (!md.IsPublic))
+            if (md != null && (!md.IsPublic) && (!md.IsFamily))
             {
                 oldFullName += "[NonPublic]";
             }
