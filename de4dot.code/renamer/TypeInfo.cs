@@ -28,7 +28,7 @@ using de4dot.blocks;
 namespace de4dot.code.renamer
 {
 
-    //#ToDo
+
     class TypeInfo : MemberInfo
     {
         public string oldNamespace;
@@ -48,6 +48,10 @@ namespace de4dot.code.renamer
             this.type = typeDef;
             this.memberInfos = memberInfos;
             oldNamespace = typeDef.TypeDef.Namespace.String;
+            if (base.oldFullName.Contains("[Public]"))
+            {
+                oldNamespace += "[Public]";
+            }
         }
 
         bool IsWinFormsClass()

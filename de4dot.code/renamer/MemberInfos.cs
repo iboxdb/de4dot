@@ -43,10 +43,54 @@ namespace de4dot.code.renamer
             oldName = memberRef.memberRef.Name.String;
             newName = memberRef.memberRef.Name.String;
         }
+
         public static string GetMyFullName(IMemberRef mref)
         {
+            //DeobfuscatorBase.cs
             var oldFullName = mref.FullName;
-           
+
+            bool ispublic = true;
+
+            var fd = mref as dnlib.DotNet.FieldDef;
+            if (fd != null)
+            {
+                ispublic = fd.IsPublic || fd.IsFamily;
+            }
+            var md = mref as dnlib.DotNet.MethodDef;
+            if (md != null)
+            {
+                ispublic = md.IsPublic || md.IsFamily || md.IsFamilyOrAssembly || md.IsFamilyAndAssembly;
+            }
+
+            TypeDef dt = mref as TypeDef;
+            if (dt == null)
+            {
+                dt = mref.DeclaringType as TypeDef;
+            }
+
+            while ((dt != null) && ispublic)
+            {
+                ispublic = dt.IsPublic || dt.IsNestedPublic;
+                dt = dt.DeclaringType;
+            }
+
+
+            if (mref is AssemblyDef || mref is EventDef || mref is FileDef)
+            {
+                ispublic = true;
+            }
+            if (ispublic)
+            {
+                oldFullName += "[Public]";
+            }
+
+            return oldFullName;
+        }
+
+        public static string GetMyFullName_OLD(IMemberRef mref)
+        {
+            var oldFullName = mref.FullName;
+
 
             var ei = oldFullName.IndexOf(' ');
             if (ei > 0)

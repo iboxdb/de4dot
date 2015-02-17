@@ -165,16 +165,10 @@ namespace de4dot.code.deobfuscators
 
         protected virtual bool CheckValidName(string name)
         {
-
             //Memberinfos.cs
-            if (name == "QL") { 
-                return true; }
             if (optionsBase.ValidNameRegex.IsMatch(name)) return true;
             if (name.Length < 3) { return true; }
-            if (name.Contains("[NonPublic]"))
-            {
-                return false;
-            }
+
 
             string[] alltrue = new string[] { "Exception", "op_Implicit", "op_Explicit",
                 "Dispose", "Invoke", "Debug"  };
@@ -185,18 +179,24 @@ namespace de4dot.code.deobfuscators
                     return true;
                 }
             }
-            if (name.StartsWith("iBoxDB.LocalServer"))
+
+            if (name.Contains("[Public]"))
             {
                 return true;
             }
-            if (name.StartsWith("iBoxDB.") && (name.IndexOf('.') == name.LastIndexOf('.')))
-            {
-                return true;
-            }
-            if (name.Equals("iBoxDB"))
-            {
-                return true;
-            }
+
+            //if (name.StartsWith("iBoxDB.LocalServer"))
+            //{
+            //    return true;
+            //}
+            //if (name.StartsWith("iBoxDB.") && (name.IndexOf('.') == name.LastIndexOf('.')))
+            //{
+            //    return true;
+            //}
+            //if (name.Equals("iBoxDB"))
+            //{
+            //    return true;
+            //}
 
             return false;
         }

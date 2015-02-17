@@ -120,9 +120,9 @@ namespace de4dot.cui
                 int oldIndentLevel = Logger.Instance.IndentLevel;
                 try
                 {
-                    file.DeobfuscateBegin();
-                    file.Deobfuscate();
-                    file.DeobfuscateEnd();
+                    //file.DeobfuscateBegin();
+                    //file.Deobfuscate();
+                    //file.DeobfuscateEnd();
 
                     Rename(new List<IObfuscatedFile> { file });
                     file.Save();
