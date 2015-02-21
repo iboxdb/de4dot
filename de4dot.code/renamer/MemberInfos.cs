@@ -54,7 +54,7 @@ namespace de4dot.code.renamer
             var fd = mref as dnlib.DotNet.FieldDef;
             if (fd != null)
             {
-                ispublic = fd.IsPublic || fd.IsFamily;
+                ispublic = fd.IsPublic || fd.IsFamily || fd.IsFamilyOrAssembly || fd.IsFamilyAndAssembly;
             }
             var md = mref as dnlib.DotNet.MethodDef;
             if (md != null)

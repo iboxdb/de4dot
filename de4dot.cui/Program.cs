@@ -82,10 +82,9 @@ namespace de4dot.cui
                 Logger.n("de4dot v{0} Copyright (C) 2011-2014 de4dot@gmail.com", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
                 Logger.n("Latest version and source code: https://github.com/0xd4d/de4dot");
                 Logger.n("");
-                Logger.n("Just for Rename Version example:  de4dot.exe ABC.DLL");
+                Logger.n("Just for Rename Version example:  de4dot.exe Your.DLL");
                 Logger.n("");
-
-                //args = new string[] { @"C:\Temp\net2Release\iBoxDB.net2.dll" };
+                 
                 var largs = new List<string>(args);
                 if (largs.Count > 0)
                 {
