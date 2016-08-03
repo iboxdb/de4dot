@@ -1,3 +1,5 @@
+This project is not actively maintained, [goto the new project](https://github.com/iboxdb/nname)
+
 .NET Obfuscator, rename only 
 
 Example :  de4dot.exe Your.dll
